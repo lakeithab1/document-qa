@@ -1,5 +1,17 @@
 import streamlit as st
 from openai import OpenAI, AuthenticationError
+from pypdf import PdfReader
+#Step 3 :To recieve the PDF uploaded 
+#To review each page of the uploaded pdf
+#Pulls the text from the page
+def read_pdf(uploaded_file):
+    pdf_reader = PdfReader(uploaded_file)
+    document = ""
+    for page in pdf_reader.pages:
+        page_text = page.extract_text()
+        if page_text:
+            document += page_text
+    return document
 
 # Show title and description.
 st.title("My Document question answering")
@@ -40,7 +52,14 @@ else:
     if uploaded_file and question:
 
         # Process the uploaded file and question.
-        document = uploaded_file.read().decode()
+        file_extension = uploaded_file.name.split('.')[-1]
+if file_extension == 'txt':
+document = uploaded_file.read().decode()
+elif file_extension == 'pdf':
+document = read_pdf(uploaded_file)
+else:
+st.error("Unsupported file type.")
+
         messages = [
             {
                 "role": "user",
@@ -50,7 +69,7 @@ else:
 
         # Generate an answer using the OpenAI API.
         stream = client.chat.completions.create(
-            model="gpt-5-nano",
+            model="gpt-4.1",
             messages=messages,
             stream=True,
         )
