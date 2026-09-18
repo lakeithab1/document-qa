@@ -1,3 +1,7 @@
 streamlit
 openai
 pypdf
+chromadb
+pysqlite3-binary
+PyPDF2
+protobuf==3.20.0

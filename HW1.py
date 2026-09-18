@@ -1,9 +1,11 @@
 import streamlit as st
 from openai import OpenAI, AuthenticationError
 from pypdf import PdfReader
-#Step 3 :To recieve the PDF uploaded 
+
+
+#Step 3:To recieve the PDF uploaded 
 #To review each page of the uploaded pdf
-#Pulls the text from the page
+#Pulls the text from every page
 def read_pdf(uploaded_file):
     pdf_reader = PdfReader(uploaded_file)
     document = ""
@@ -53,12 +55,12 @@ else:
 
         # Process the uploaded file and question.
         file_extension = uploaded_file.name.split('.')[-1]
-if file_extension == 'txt':
-document = uploaded_file.read().decode()
-elif file_extension == 'pdf':
-document = read_pdf(uploaded_file)
-else:
-st.error("Unsupported file type.")
+        if file_extension == 'txt':
+            document = uploaded_file.read().decode()
+        elif file_extension == 'pdf':
+            document = read_pdf(uploaded_file)
+        else:
+            st.error("Unsupported file type.")
 
         messages = [
             {
