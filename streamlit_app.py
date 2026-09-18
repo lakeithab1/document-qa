@@ -8,7 +8,7 @@ st.set_page_config(
 
 lab1 = st.Page(
     "Lab1.py", 
-    title="Lab  1",
+    title="Lab 1",
     icon = "✏️"
 )
 
@@ -25,15 +25,14 @@ lab3 = st.Page(
 )
 
 lab4 = st.Page(
-        "Lab4.py",
+    "Lab4.py",
     title= "Lab 4",
     icon="✏️",
     default=True
 
 )
 
-#Creare 4A collection
-#Cost oney so make ut seperate
+
 pg = st.navigation([
     lab1,
     lab2,
