@@ -1,4 +1,5 @@
 import requests
+import streamlit as st 
 
 def get_current_weather(location):
     url = f'https://wttr.in/{location}?format=j1'
@@ -10,6 +11,30 @@ def get_current_weather(location):
             f"wwtr.in error: status {response.status_code}"
 
         )
+    st.title("What to Wear Bot👔")
+
+    st.write(
+        "Enter a city to recieve weather information." \
+        "Clothing and outdoor activity reccommendations will added."
+    )
+
+    location = st.text_input(
+        "Enter a city:", 
+        placeholder= "Example: Syracuse, NY"
+    )
+
+    if st.button ("Check Weather🔎"):
+
+        if not location.strip():
+            location = 'Syracuse, NY'
+
+    try:
+        weather_data = get_current_weather(location)
+
+        st.subheader(f"Weather for {location}")
+        st.json (weather_data)
+    except Exception as error:
+        st.error(str(error))
     try:
         data = response.json()
     except ValueError:
@@ -41,6 +66,3 @@ def get_current_weather(location):
         "wind_speed_mph": float(current["windspeedMiles"]),
         "maximum_chance_of_rain": chance_of_rain, #Add the highest chance of rain 
         "maximum_chance_of_snow": chance_of_snow    } #Adds the highest chance of snow
-
-print(get_current_weather("Syracuse, NY"))
-print(get_current_weather("Lima, Peru"))
