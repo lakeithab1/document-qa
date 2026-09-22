@@ -1,43 +1,42 @@
 import streamlit as st
 
-
 st.set_page_config(
     page_title="Building Human-Centered AI Applications",
-    page_icon=":material/edit:"
+    page_icon="🤖"
 )
 
-lab1 = st.Page(
-    "Lab1.py", 
-    title="Lab 1",
-    icon = "✏️"
-)
+# Create pages
 
 lab2 = st.Page(
     "Lab2.py",
     title="Lab 2",
-    icon = "✏️",
+    icon="📝"
 )
 
 lab3 = st.Page(
     "Lab3.py",
     title="Lab 3",
-    icon="✏️"       
+    icon="📝"
 )
 
 lab4 = st.Page(
     "Lab4.py",
-    title= "Lab 4",
-    icon="✏️",
-    default=True
-
+    title="Lab 4",
+    icon="📝"
+    
 )
 
+lab5 = st.Page(
+    "Lab5.py",
+    title="Lab 5",
+    icon="📝",
+    default=True
+)
 
-pg = st.navigation([
-    lab1,
-    lab2,
-    lab3,
-    lab4
-])
+# Navigation
+pg = st.navigation(
+    [ lab2, lab3, lab4, lab5]
+)
 
+# Run selected page
 pg.run()
