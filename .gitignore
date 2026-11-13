@@ -5,7 +5,7 @@ __pycache__/
 *$py.class
 
 # C extensions
-*
+*.so
 
 # Distribution / pac54tgf ykaging
 .Python

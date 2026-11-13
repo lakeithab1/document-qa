@@ -29,13 +29,21 @@ lab4 = st.Page(
 lab5 = st.Page(
     "Lab5.py",
     title="Lab 5",
+    icon="📝"
+)
+
+lab8 = st.Page(
+    "LabRerank.py",
+    title="Lab 8",
     icon="📝",
     default=True
 )
 
+
+
 # Navigation
 pg = st.navigation(
-    [ lab2, lab3, lab4, lab5]
+    [ lab2, lab3, lab4, lab5, lab8]
 )
 
 # Run selected page
