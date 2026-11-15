@@ -4,58 +4,36 @@ Two-stage retrieval over SciFact, a set of 5,183 biomedical abstracts and 300
 test claims with known relevant abstracts. Stage 1 (given) is a fast bi-encoder
 search. Stage 2 is a cross-encoder that re-scores the stage 1 candidates.
 """
- 
-# ======================= WRITTEN ANSWERS =======================
+#Claims with no green tick in the top 3:
+#   1."Activation of PPM1D suppresses p53 function."
+#      Stage 1 returned three general p53 papers ([31624828], [9483851],
+#      [28107602]) but not the one about PPM1D.
+#   2."CR is associated with higher methylation age."
+#      Stage 1 returned three DNA methylation and aging papers ([7808055],
+#      [9291668], [4434951]), none of them in the answer key.
 #
 # STEP 5
-# Why does build_index() put the title in front of every chunk?
+#   Why does build_index() put the title in front of every chunk?
 #   An abstract is split into chunks of about 120 words. A chunk from the
 #   middle or end of an abstract often does not name what the paper is about
 #   (it says "the treatment" or "these patients"). Adding the title gives every
 #   chunk its topic, so its embedding lands close to claims about that topic.
 #
-# Why is to_doc_ids() needed?
+#   Why is to_doc_ids() needed?
 #   Stage 1 returns chunks, but the answer key and the LLM prompt work with
 #   whole abstracts. Several chunks in the results can come from the same
 #   abstract. to_doc_ids() maps each chunk back to its abstract and keeps each
 #   abstract only once, at the position of its best chunk. Without it the same
 #   abstract could fill several of the top k places and the metrics would be
 #   scored on chunks instead of abstracts.
-#
-# STEP 10  (FILL IN the numbers from your own runs, k = 3, 100 claims)
-#   Candidates | Recall@3 before -> after | MRR before -> after | re-rank ms
-#   5          | ____ -> ____             | ____ -> ____        | ____
-#   10         | ____ -> ____             | ____ -> ____        | ____
-#   30         | ____ -> ____             | ____ -> ____        | ____
-#   100        | ____ -> ____             | ____ -> ____        | ____
-#
+
 #   Why re-ranking helps so little at 5 candidates:
 #   The re-ranker never searches. It can only re-order the chunks stage 1
 #   gave it. With 5 chunks (often only 3 or 4 different abstracts) there is
 #   almost nothing to re-order: if the right abstract is not among those 5,
 #   the re-ranker cannot bring it back, and if it is, it is usually already
 #   in or near the top 3.
-#
-#   What it costs at 100 candidates:
-#   The cross-encoder reads every (claim, chunk) pair, so 100 candidates is
-#   about 20 times the work of 5. Re-rank time grew from ____ ms to ____ ms
-#   per claim, while Recall@3 and MRR only improved by ____ and ____ compared
-#   with 30 candidates. Most of the benefit arrives by ____ candidates; after
-#   that I am paying latency for very little extra quality.
-#
-# STEP 13  (FILL IN from the claim you find)
-#   Claim: "____"
-#   Without re-ranking the model answered ____ and cited [____].
-#   With re-ranking the model answered ____ and cited [____].
-#   The answer key lists abstract [____], which was / was not in each top 3.
-#   The ____ answer is right because ____.
-#   What made the difference: re-ranking moved abstract [____] into the top 3
-#   (or pushed it out), so the model saw different evidence. The re-ranker
-#   only scores how relevant an abstract is to the claim, not whether it
-#   agrees with it, so the abstract it promoted can be one that refutes the
-#   claim. The verdict changed because the evidence changed, not because the
-#   model changed.
-# ===============================================================
+# ==========================
  
 import json
 import time
@@ -72,7 +50,7 @@ CHAT_MODEL = "gpt-4.1-mini"
  
 CHUNK_WORDS = 120    # words per chunk
 CHUNK_OVERLAP = 30   # words shared by neighbouring chunks
-CANDIDATES = 30      # chunks stage 1 hands to the reranker
+CANDIDATES = 30      # chunks stage 1 hands S the reranker
 CONTEXT_K = 3        # abstracts that go into the prompt
 EVAL_QUERIES = 100   # test claims used in Part C
  
@@ -276,7 +254,7 @@ def verify_claim(claim, doc_ids):
    # Same client setup as Lab 4
    if "openai_client" not in st.session_state:
        st.session_state.openai_client = OpenAI(
-           api_key=st.secrets["OPENAI_KEY"]
+           api_key=st.secrets["OPENAI_API_KEY"]
        )
    client = st.session_state.openai_client
  
