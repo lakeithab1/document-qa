@@ -2,7 +2,7 @@ streamlit
 openai
 pypdf
 chromadb
-pysqlite3-binary
+pysqlite3-binary; sys_platform == "linux"
 PyPDF2
 protobuf==3.20.0
    --extra-index-url https://download.pytorch.org/whl/cpu
